@@ -35,10 +35,8 @@ class MoviesFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_movies, container, false)
-    }
+    ) = inflater.inflate(R.layout.fragment_movies, container, false)
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -46,7 +44,6 @@ class MoviesFragment : Fragment() {
         setupRecyclerView()
         setupViewModel()
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) { setupObserver() }
-
     }
 
 
@@ -74,7 +71,6 @@ class MoviesFragment : Fragment() {
                         resource.data?.let { movies ->
                             progressBarMovies.visibility = View.GONE
                             val arrayList = ArrayList<ItemMovies>()
-                            Log.d("results", movies.results.size.toString())
                             movies.results.forEachIndexed { index, _ ->
                                 arrayList.add(
                                     ItemMovies(
@@ -93,7 +89,6 @@ class MoviesFragment : Fragment() {
                     ERROR -> {
                         progressBarMovies.visibility = View.GONE
                         Toast.makeText(requireContext(), "Ошибка! ${resource.msg}", Toast.LENGTH_SHORT).show()
-                        Log.d("fdsfsd","${resource.msg}")
                     }
                 }
             }
