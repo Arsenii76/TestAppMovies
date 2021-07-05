@@ -1,8 +1,8 @@
-package com.e.testappmovies.ui
+package com.e.testappmovies.data.networkerror
 
-object ErrorStatus {
+object StatusError {
     const val NO_CONNECTION = "Нет соединения с интернетом!"
     const val SERVER_ERROR = "На сервере произошла ошибка!"
-    const val TIMEOUT_EXPIRED = "Время ожидания истекло!"
+    const val TIMEOUT_ERROR = "Время ожидания истекло!"
     const val UNKNOWN_ERROR = "Произошла ошибка!"
 }
