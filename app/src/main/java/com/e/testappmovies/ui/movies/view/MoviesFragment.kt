@@ -14,10 +14,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.e.testappmovies.R
 import com.e.testappmovies.data.api.RetrofitBuilder
+import com.e.testappmovies.data.model.ResponseMovies
 import com.e.testappmovies.data.repository.helper.ApiHelperMovies
-import com.e.testappmovies.ui.ViewState.SUCCESS
-import com.e.testappmovies.ui.ViewState.ERROR
-import com.e.testappmovies.ui.ViewState.LOADING
+import com.e.testappmovies.ui.ViewState.Success
+import com.e.testappmovies.ui.ViewState.Error
+import com.e.testappmovies.ui.ViewState.Loading
 import com.e.testappmovies.ui.movies.adapter.ItemMovies
 import com.e.testappmovies.ui.movies.adapter.MoviesAdapter
 import com.e.testappmovies.ui.movies.viewmodel.MoviesViewModel
@@ -43,7 +44,7 @@ class MoviesFragment : Fragment() {
 
         setupRecyclerView()
         setupViewModel()
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) { setupObserver() }
+        setupObserver()
     }
 
 
@@ -63,32 +64,22 @@ class MoviesFragment : Fragment() {
         ).get(MoviesViewModel::class.java)
     }
 
-    private fun setupObserver(){
+    private fun setupObserver() {
         movesViewModel.moviesLiveData.observe(requireActivity(), {
             it.let { resource ->
-                when (resource.status) {
-                    SUCCESS -> {
+                when (resource) {
+                    is Success -> {
                         resource.data?.let { movies ->
                             progressBarMovies.visibility = View.GONE
-                            val arrayList = ArrayList<ItemMovies>()
-                            movies.results.forEachIndexed { index, _ ->
-                                arrayList.add(
-                                    ItemMovies(
-                                        title = movies.results[index].title,
-                                        description = movies.results[index].description,
-                                        image = movies.results[index].multimedia.image
-                                    )
-                                )
-                            }
-                            adapterMovies.addMovies(arrayList)
-                        }
+                            adapterMovies.addMovies(movies.results)
+                        } ?: Toast.makeText(requireContext(), "Данных нет!", Toast.LENGTH_SHORT).show()
                     }
-                    LOADING -> {
+                    is Loading -> {
                         progressBarMovies.visibility = View.VISIBLE
                     }
-                    ERROR -> {
+                    is Error -> {
                         progressBarMovies.visibility = View.GONE
-                        Toast.makeText(requireContext(), "Ошибка! ${resource.msg}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(requireContext(), resource.exception, Toast.LENGTH_SHORT).show()
                     }
                 }
             }
